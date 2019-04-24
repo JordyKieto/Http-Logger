@@ -8,12 +8,12 @@ hitIndex = 0
 setIndex = 0
 
 def setPagesByHits(page):
-        global hitIndex
-        if page in pagesByHits:
-            pagesByHits[page][hitIndex] = 1
-        else:
-            pagesByHits[page] = {hitIndex : 1}
-        hitIndex = hitIndex+1
+    global hitIndex
+    if page in pagesByHits:
+        pagesByHits[page][hitIndex] = 1
+    else:
+        pagesByHits[page] = {hitIndex : 1}
+    hitIndex = hitIndex+1
 
 def setPagesByUsers(page, user):
     if page in pagesByUsers:
