@@ -1,18 +1,19 @@
 import pandas as pd
 data = pd.read_csv('log.csv')
 
-# pages by unique hits
 pagesByHits = {}
-# pages by number of users
 pagesByUsers = {}
-# users by unique page views
 usersByPage = {}
+hitIndex = 0
+setIndex = 0
 
 def setPagesByHits(page):
-    if page in pagesByHits:
-        pagesByHits[page] = pagesByHits[page]+1
-    else:
-        pagesByHits[page] = 1
+        global hitIndex
+        if page in pagesByHits:
+            pagesByHits[page][hitIndex] = 1
+        else:
+            pagesByHits[page] = {hitIndex : 1}
+        hitIndex = hitIndex+1
 
 def setPagesByUsers(page, user):
     if page in pagesByUsers:
@@ -34,25 +35,19 @@ def setData(data):
     setPagesByHits(page)
     setPagesByUsers(page, user)
     setUsersByPage(page, user)
-    
-index = 0
-while(index<data.shape[0]):
-    setData(data.iloc[index])
-    index = index+1
 
-print('<<<<<<Pages by hits>>>>>')
-pagesByHitsSorted = sorted(pagesByHits.items(), key=lambda x: x[1], reverse=True)
-for page in pagesByHitsSorted:
-    print(f'Page: {page[0]} has {page[1]} unique hits')
-print()
+# text param is tuple of values being compared
+def printData(data, text):
+    print(f'<<<<<<{text[0]}s by {text[1]}>>>>>')
+    data = sorted(data.items(), key=lambda x: len(x[1].keys()), reverse=True)
+    for obj in data:
+        print(f'{text[0]}: {obj[0]} has {len(obj[1].keys())} unique {text[1]}(s)')
+    print()
 
-print('<<<<<<Pages by users>>>>>')    
-pagesByUsersSorted = sorted(pagesByUsers.items(), key=lambda x: len(x[1].keys()), reverse=True)
-for page in pagesByUsersSorted:
-   print(f'Page:{page[0]} has {len(page[1].keys())} unique viewers')
-print()
+while(setIndex<data.shape[0]):
+    setData(data.iloc[setIndex])
+    setIndex = setIndex+1
 
-print('<<<<<Users by page>>>>>>>>>>>')
-usersByPageSorted = sorted(usersByPage.items(), key=lambda x: len(x[1].keys()), reverse=True)
-for user in usersByPageSorted:
-    print(f'User: {user[0]} has {len(user[1].keys())} unique page views')
+printData(pagesByHits, ['page', 'hit'])
+printData(pagesByUsers, ['page', 'users'])
+printData(usersByPage, ['user', 'page-view'])
